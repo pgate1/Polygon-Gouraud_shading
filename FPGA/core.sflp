@@ -1,0 +1,108 @@
+
+%i "chatmask.h"
+%i "seg7_ctrl.h"
+%i "vga_ctrl.h"
+
+%i "GPU.h"
+
+circuit core
+{
+	input BUTTON<3>;
+	chatmask cmask_0, cmask_1, cmask_2;
+	sela btn[3];
+	input SW<10>;
+	output HEX0<7>, HEX1<7>, HEX2<7>, HEX3<7>;
+	seg7_ctrl seg7_0, seg7_1, seg7_2, seg7_3;
+	sel seg<16>;
+	output LEDG<10>;
+//--------------------- VGA --------------------------------
+	output VGA_HS, VGA_VS;
+	output VGA_R<4>, VGA_G<4>, VGA_B<4>;
+	reg_wr clock25M_div;
+	vga_ctrl vga;
+//----------------------------------------------------------
+
+	reg_ws reset;
+
+	GPU gpu;
+	reg_wr ax<9>, ay<9>; // âÒì]äp 0Å`359ìx
+
+	reg_wr count<18>;
+
+	if(reset){
+		reset := 0b0;
+		// èâä˙âÒì]äp
+		ax := 29;
+		ay := 324;
+	}
+
+	par(i=0;i<3;i++){
+		cmask[i].bin = ^BUTTON<i>; btn[i] = cmask[i].bout;
+	}
+
+	HEX3 = seg7_3.con(seg<15:12>).oSEG;
+	HEX2 = seg7_2.con(seg<11: 8>).oSEG;
+	HEX1 = seg7_1.con(seg< 7: 4>).oSEG;
+	HEX0 = seg7_0.con(seg< 3: 0>).oSEG;
+
+	clock25M_div := ^clock25M_div;
+	if(clock25M_div){
+		vga.htiming();
+		gpu.htiming();
+	}
+
+	if(SW<0> &
+	  ((vga.h_count==0) | (vga.h_count==639) |
+	   (vga.v_count==0) | (vga.v_count==479))){
+		vga.iR = 0b1111;
+		vga.iG = 0b1111;
+		vga.iB = 0b1111;
+	}
+	else{
+		if(gpu.view_on){
+			vga.iR = gpu.eR;
+			vga.iG = gpu.eG;
+			vga.iB = gpu.eB;
+		}
+		else{
+			vga.iR = (0xFF - vga.v_count<8:1>)<7:4>;
+			vga.iG = vga.iR;
+			vga.iB = vga.iR;
+		}
+	}
+
+	VGA_HS = vga.h_sync;
+	VGA_VS = vga.v_sync;
+	VGA_R = vga.oR;
+	VGA_G = vga.oG;
+	VGA_B = vga.oB;
+
+	instruct vga.vblank_begin gpu.vblank_begin();
+	instruct vga.hblank_begin par{
+		if(vga.v_en){
+			gpu.hblank_begin();
+		}
+	}
+
+	gpu.x = vga.h_count;
+	gpu.y = vga.v_count;
+	gpu.ax = ax;
+	gpu.ay = ay;
+
+	count++;
+
+	if(btn_2 & /&count) any{
+		ax==359 : ax := 0;
+		else : ax++;
+	}
+
+	if(btn_1 & /&count) any{
+		ay==359 : ay := 0;
+		else : ay++;
+	}
+
+	seg = ax<7:0> || ay<7:0>;
+
+	LEDG = gpu.dbg || 0b000000000;
+
+}

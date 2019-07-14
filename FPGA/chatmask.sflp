@@ -1,0 +1,14 @@
+
+circuit chatmask
+{
+	input bin;
+	output bout;
+	reg_wr bin_reg, bout_reg, count<8>;
+
+	bin_reg := bin;
+	if(bin_reg==bin) count++;
+	else count := 0;
+
+	if(count<7>) bout_reg := bin_reg;
+	bout = bout_reg;
+}

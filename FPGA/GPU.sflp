@@ -1,0 +1,215 @@
+
+%i "sin_table.h"
+%i "cos_table.h"
+%i "mul_s10.h"
+%i "drawGouraud.h"
+
+circuit GPU
+{
+	input x<10>, y<10>;
+	input ax<9>, ay<9>;
+	instrin vblank_begin, hblank_begin, htiming;
+	output view_on, eR<4>, eG<4>, eB<4>;
+	reg_wr view_reg, eR_reg<4>, eG_reg<4>, eB_reg<4>;
+
+	// ４点により正四面体を構成する
+	mem px[4]<10> = {-90,  90, -90, 90};
+	mem py[4]<10> = {-90, -90,  90, 90};
+	mem pz[4]<10> = { 90, -90, -90, 90};
+
+	mem vc[4]<24> = {0xFF4444, 0xFFFF44, 0x44FF44, 0x4444FF};
+
+	// 回転後の座標
+	mem gx[4]<10> = {0};
+	mem gy[4]<10> = {0};
+	mem gz[4]<10> = {0};
+
+	sin_table sin_t;
+	cos_table cos_t;
+	mul_s10 mul_sin, mul_cos;
+
+	mem zs[4]<2> = {0};
+	instrself von_0, von_1, von_2, von_3;
+
+	drawGouraud poly_0, poly_1, poly_2, poly_3;
+	instrself voff;
+
+output dbg;
+
+	stage_name rotate { task do(); }
+	stage_name zsort { task do(); }
+	stage_name rotate_wait { task do(); }
+
+dbg = poly_0.dbg;
+
+	instruct vblank_begin par{
+		generate rotate.do();
+		generate rotate_wait.do();
+	}
+
+	instruct hblank_begin par{
+		poly_0.hblank_begin();
+		poly_1.hblank_begin();
+		poly_2.hblank_begin();
+		poly_3.hblank_begin();
+	}
+
+	instruct htiming par{
+		poly_0.htiming();
+		poly_1.htiming();
+		poly_2.htiming();
+		poly_3.htiming();
+	}
+
+	// 四面必要、右回り
+	poly_0.con(gx[0],gy[0],vc[0], gx[1],gy[1],vc[1], gx[2],gy[2],vc[2], x,y, 0b1);
+	poly_1.con(gx[1],gy[1],vc[1], gx[3],gy[3],vc[3], gx[2],gy[2],vc[2], x,y, 0b1);
+	poly_2.con(gx[0],gy[0],vc[0], gx[3],gy[3],vc[3], gx[1],gy[1],vc[1], x,y, 0b1);
+	poly_3.con(gx[0],gy[0],vc[0], gx[2],gy[2],vc[2], gx[3],gy[3],vc[3], x,y, 0b1);
+
+	par(i=0;i<4;i++){
+		instruct von[i] par{ eR_reg:=poly[i].out_R<7:4>; eG_reg:=poly[i].out_G<7:4>; eB_reg:=poly[i].out_B<7:4>; }
+	}
+
+	alt{
+		(zs[0]==0) & poly_0.view_on : von_0();
+		(zs[0]==1) & poly_1.view_on : von_1();
+		(zs[0]==2) & poly_2.view_on : von_2();
+		(zs[0]==3) & poly_3.view_on : von_3();
+		(zs[1]==0) & poly_0.view_on : von_0();
+		(zs[1]==1) & poly_1.view_on : von_1();
+		(zs[1]==2) & poly_2.view_on : von_2();
+		(zs[1]==3) & poly_3.view_on : von_3();
+		(zs[2]==0) & poly_0.view_on : von_0();
+		(zs[2]==1) & poly_1.view_on : von_1();
+		(zs[2]==2) & poly_2.view_on : von_2();
+		(zs[2]==3) & poly_3.view_on : von_3();
+		(zs[3]==0) & poly_0.view_on : von_0();
+		(zs[3]==1) & poly_1.view_on : von_1();
+		(zs[3]==2) & poly_2.view_on : von_2();
+		(zs[3]==3) & poly_3.view_on : von_3();
+		else : voff();
+	}
+
+	view_reg := ^voff;
+	view_on = view_reg;
+	eR = eR_reg;
+	eG = eG_reg;
+	eB = eB_reg;
+
+	// VBlank中に回転処理
+	stage rotate {
+		reg_wr index<2>;
+		reg_wr bx<10>, by<10>, bz<10>;
+		reg_wr rx1<10>, ry1<10>, rz1<10>;
+		reg_wr rx2<10>, ry2<10>, rz2<10>;
+		first_state stinit;
+		state stinit par{
+			bx := px[index];
+			by := py[index];
+			bz := pz[index];
+
+			// X回転
+			sin_t.read(ax);
+			cos_t.read(ax);
+			goto strx1;
+		}
+		state strx1 par{
+			rx1 := bx;
+			ry1 := mul_cos.con(by, cos_t.dout).dout<17:8> - mul_sin.con(bz, sin_t.dout).dout<17:8>;
+			goto strx2;
+		}
+		state strx2 par{
+			rz1 := mul_sin.con(by, sin_t.dout).dout<17:8> + mul_cos.con(bz, cos_t.dout).dout<17:8>;
+
+			// Y回転
+			sin_t.read(ay);
+			cos_t.read(ay);
+			goto stry1;
+		}
+		state stry1 par{
+			rx2 := mul_cos.con(rx1, cos_t.dout).dout<17:8> - mul_sin.con(rz1, sin_t.dout).dout<17:8>;
+			ry2 := ry1;
+			goto stry2;
+		}
+		state stry2 par{
+			rz2 := mul_sin.con(rx1, sin_t.dout).dout<17:8> + mul_cos.con(rz1, cos_t.dout).dout<17:8>;
+			goto stshift;
+		}
+		state stshift par{
+			// 画面中央に平行移動
+			gx[index] := rx2 + 320;
+			gy[index] := ry2 + 240;
+			gz[index] := rz2;
+			goto stinit;
+			index++;
+			if(index==3){
+				generate zsort.do();
+				finish;
+			}
+		}
+	}
+
+	// 小さい順にソート
+	stage zsort {
+		mem z[4]<10> = {0};
+		reg_wr s<3>;
+		first_state st0;
+		state st0 par{
+			z[0] := gz[0] + gz[1] + gz[2];
+			z[1] := gz[1] + gz[3] + gz[2];
+			z[2] := gz[0] + gz[3] + gz[1];
+			z[3] := gz[0] + gz[2] + gz[3];
+			par(i=0;i<4;i++){
+				zs[i] := i;
+			}
+			s := 0;
+			goto st1;
+		}
+		state st1 par{
+			if((z[1]-z[0])<9>){ // 0 > 1
+				z[0] := z[1];
+				z[1] := z[0];
+				zs[0] := zs[1];
+				zs[1] := zs[0];
+			}
+			if(s==5){
+				goto st0;
+				finish;
+			}
+			else goto st2;
+			s++;
+		}
+		state st2 par{
+			if((z[2]-z[1])<9>){ // 1 > 2
+				z[1] := z[2];
+				z[2] := z[1];
+				zs[1] := zs[2];
+				zs[2] := zs[1];
+			}
+			if(s==4) goto st1;
+			else goto st3;
+			s++;
+		}
+		state st3 par{
+			if((z[3]-z[2])<9>){ // 2 > 3
+				z[2] := z[3];
+				z[3] := z[2];
+				zs[2] := zs[3];
+				zs[3] := zs[2];
+			}
+			goto st1;
+			s++;
+		}
+	}
+
+	stage rotate_wait {
+		if(^rotate.do & ^zsort.do){
+			poly_0.vblank_begin();
+			poly_1.vblank_begin();
+			poly_2.vblank_begin();
+			poly_3.vblank_begin();
+			finish;
+		}
+	}
+}
