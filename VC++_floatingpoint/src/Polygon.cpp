@@ -55,8 +55,7 @@ void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x
 
 	int sy = y1, ey = y3;
 
-#define cul(x) ((x)<0 ? (x)|~0x3FF: (x)&0x3FF)
-	int eval = cul(y3 - y1) * cul(x2 - x1) - cul(x3 - x1) * cul(y2 - y1);
+	int eval = (y3 - y1) * (x2 - x1) - (x3 - x1) * (y2 - y1);
 	//TRACE("eval %d\n", eval);
 
 	for (int y = sy; y <= ey; y++) {
