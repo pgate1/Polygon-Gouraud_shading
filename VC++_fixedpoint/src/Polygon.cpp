@@ -37,8 +37,25 @@ void Polygon::table_init(void)
 //fclose(fp);
 }
 
+uint8 dither(int x, int y, int col)
+{
+	static int table[16] = {
+		-4,  0, -3,  1,
+		 2, -2,  3, -1,
+		-3,  1, -4,  0,
+		 3, -1,  2, -2
+	};
+	int d = table[((y & 3) << 2) | (x & 3)];
+	col += d;
+	if (col>255) col = 255;
+	else if (col<0) col = 0;
+	return col;
+}
+
 void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x3, int y3, int c1, int c2, int c3)
 {
+	//	TRACE("%d %d %d %d %d %d\n", x1, y1, x2, y2, x3, y3);
+
 	// 頂点入れ替え
 	if (y1 > y2) {
 		int xt = x1; x1 = x2; x2 = xt;
@@ -56,15 +73,22 @@ void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x
 		int ct = c2; c2 = c3; c3 = ct;
 	}
 
+	//	TRACE("%d %d %d %d %d %d\n", x1, y1, x2, y2, x3, y3);
+
 	// 色分解
 	int r1 = c1 >> 16, g1 = (c1 >> 8) & 0xFF, b1 = c1 & 0xFF;
 	int r2 = c2 >> 16, g2 = (c2 >> 8) & 0xFF, b2 = c2 & 0xFF;
 	int r3 = c3 >> 16, g3 = (c3 >> 8) & 0xFF, b3 = c3 & 0xFF;
+	//TRACE("%d %d %d %d %d %d %d %d %d\n", r1, g1, b1, r2, g2, b2, r3, g3, b3);
 
 	// intの範囲をオーバーしないように
+	// どうしてもy==y1の時などにsx>exとなってしまう場合がある
 	int64 ax12 = (((int64)(x2 - x1) << IMULS) * inv_table[y2 - y1]) >> IMULS;
 	int64 ax13 = (((int64)(x3 - x1) << IMULS) * inv_table[y3 - y1]) >> IMULS;
 	int64 ax23 = (((int64)(x3 - x2) << IMULS) * inv_table[y3 - y2]) >> IMULS;
+
+	//TRACE("%X %X\n", (x2-x1), (x2-x1)<<IMULS);
+	//TRACE("a %I64X %I64X %I64X\n", ax12, ax13, ax23);
 
 	int64 x12 = x1 << IMULS;
 	int64 x13 = x1 << IMULS;
@@ -92,10 +116,11 @@ void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x
 
 	int sy = y1, ey = y3;
 
-	int eval = (y3 - y1) * (x2 - x1) - (x3 - x1) * (y2 - y1);
+#define cul(x) ((x)<0 ? (x)|~0x3FF: (x)&0x3FF)
+	int eval = cul(y3 - y1) * cul(x2 - x1) - cul(x3 - x1) * cul(y2 - y1);
 	//TRACE("eval %d\n", eval);
 
-	for (int y = sy; y <= ey; y++) {
+	for (int y = sy; y <= ey; y++) { // ok
 
 		int64 sx, ex;
 		int sr, sg, sb;
@@ -137,22 +162,34 @@ void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x
 		b13 += ab13;
 
 		if ((sx >> IMULS) > (ex >> IMULS)) {
+			//	TRACE("y %d  sy %d ey %d  sx %d ex %d\n", y, sy, ey, sx, ex);
 			ex = sx = 640 << IMULS;
 		}
 
-		int ar = ((er - sr) * inv_table[(ex - sx) >> IMULS]) >> IMULS;
-		int ag = ((eg - sg) * inv_table[(ex - sx) >> IMULS]) >> IMULS;
-		int ab = ((eb - sb) * inv_table[(ex - sx) >> IMULS]) >> IMULS;
+		int ar, ag, ab;
+//	if(sx!=ex){
+
+		ar = ((er - sr) * inv_table[(ex - sx) >> IMULS]) >> IMULS;
+		ag = ((eg - sg) * inv_table[(ex - sx) >> IMULS]) >> IMULS;
+		ab = ((eb - sb) * inv_table[(ex - sx) >> IMULS]) >> IMULS;
+//	}
 
 		int pr = sr, pg = sg, pb = sb;
 
-		for (int x = (int)(sx >> IMULS); x<(int)(ex >> IMULS); x++) {
+		for (int x = (int)(sx >> IMULS); x<(int)(ex >> IMULS); x++) { // ok
 
 			// BMPのためBGRの並びになっている
 			uint8 *p = img + ((640 * y) + x) * 3;
-			p[0] = (pb >> CMULS);
-			p[1] = (pg >> CMULS);
-			p[2] = (pr >> CMULS);
+			if (dither_on) {
+				p[0] = dither(x, y, (pb >> CMULS)) & 0xF8;
+				p[1] = dither(x, y, (pg >> CMULS)) & 0xF8;
+				p[2] = dither(x, y, (pr >> CMULS)) & 0xF8;
+			}
+			else {
+				p[0] = (pb >> CMULS);
+				p[1] = (pg >> CMULS);
+				p[2] = (pr >> CMULS);
+			}
 
 			pr += ar;
 			pg += ag;
@@ -163,6 +200,8 @@ void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x
 
 void Polygon::DrawPoly(uint8 *img)
 {
+	//for(i=0;i<9;i++)TRACE("%d ", tri[i]);TRACE("\n");
+	//TRACE("ax %d  ay %d\n", ax, ay);
 	const Vertex vA = Vertex(-90, -90, 90, 0xFF4444);
 	const Vertex vB = Vertex(90, -90, -90, 0xFFFF44);
 	const Vertex vC = Vertex(-90, 90, -90, 0x44FF44);
@@ -186,6 +225,7 @@ void Polygon::DrawPoly(uint8 *img)
 	// 背景
 	for (int y = 0; y<480; y++) {
 		int col = 0xFF - (y >> 1);
+		if(dither_on) col = dither(0, y, col) & 0xF8;
 		for (int x = 0; x < 640; x++) {
 			uint8 *p = img + (y * 640 + x) * 3;
 			p[0] = p[1] = p[2] = col;

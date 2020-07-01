@@ -40,6 +40,7 @@ class Polygon
 	int *inv_table;
 
 	int ax, ay, az;
+	bool dither_on;
 
 private:
 
@@ -50,6 +51,7 @@ public:
 	Polygon()
 	{
 		table_init();
+		dither_on = false;
 	}
 
 	~Polygon()
@@ -134,7 +136,13 @@ public:
 			}
 		}
 
+		//for(i=0; i<men; i++) TRACE("%d\n", z[i]);
 		delete[] z;
+	}
+
+	void dither_flip(void)
+	{
+		dither_on = !dither_on;
 	}
 
 	void drawPolyBilinear(uint8 *lp, int x1, int y1, int x2, int y2, int x3, int y3, int c1, int c2, int c3);

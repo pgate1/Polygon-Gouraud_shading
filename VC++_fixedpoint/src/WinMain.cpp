@@ -3,7 +3,7 @@
 
 class Polygon poly;
 int ax, ay;
-BOOL m_on = false;
+BOOL mouse_on = false;
 int px, py;
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -15,6 +15,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch(uMsg){
 
 		case WM_CREATE:
+		//	TRACE("on_create\n");
 			bufDC = CreateCompatibleDC(GetDC(hWnd));
 
 			BITMAPINFO bmInfo;
@@ -35,37 +36,41 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_PAINT:
+		//	TRACE("on_paint\n");
+
 		//	BITMAP bm;
 		//	GetObject(bufBMP, sizeof(BITMAP), &bm);
 		//	poly.DrawPoly((uint8 *)bm.bmBits);
 
 			poly.DrawPoly((uint8 *)lpPixel);
 
-		//	HDC hDC = GetDC(hWnd);
+			//	HDC hDC = GetDC(hWnd);
 			PAINTSTRUCT ps;
 			HDC hDC;
 			hDC = BeginPaint(hWnd, &ps);
 
 			BitBlt(hDC, 0, 0, 640, 480, bufDC, 0, 0, SRCCOPY);
 
-		//	ReleaseDC(hWnd, hDC);
-		//	ValidateRect(hWnd, NULL);
+			//	ReleaseDC(hWnd, hDC);
+			//	ValidateRect(hWnd, NULL);
 
 			EndPaint(hWnd, &ps);
 
 			break;
 
 		case WM_LBUTTONDOWN:
+		//	TRACE("on_lbuttondown\n");
 			px = LOWORD(lParam);
 			py = HIWORD(lParam);
-			m_on = true;
+			mouse_on = true;
 			break;
 
 		case WM_MOUSEMOVE:
-			if (m_on == false) break;
+			if (mouse_on == false) break;
 
 			ax += HIWORD(lParam) - py;
 			ay += LOWORD(lParam) - px;
+			//	az+=-(ysize-(HIWORD(lParam))-1-mpy)-(LOWORD(lParam)-1-mpx);
 
 			if (ax<0) ax += 360;
 			else if (ax >= 360) ax -= 360;
@@ -82,13 +87,19 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_LBUTTONUP:
-			m_on = false;
+			mouse_on = false;
+			break;
+	
+		case WM_RBUTTONDOWN:
+			poly.dither_flip();
+			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 	//	case WM_ERASEBKGND: // îwåiÇÃï`âÊÇèàóùÇµÇΩÇ±Ç∆Ç…Ç∑ÇÈÅB
 		//	return TRUE;
 
 		case WM_SIZE:
+		//	TRACE("size\n");
 			break;
 
 		case WM_DESTROY:
@@ -121,5 +132,5 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 		DispatchMessage(&msg);
 	}
 
-	return (int)msg.wParam;
+	return msg.wParam;
 }
