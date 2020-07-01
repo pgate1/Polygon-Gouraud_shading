@@ -10,7 +10,7 @@ Using VisualStudio2015.
 ## on JavaScript
 JavaScript sample.  
 It has been tested on IE11, Firefox, and Chrome.
-<a href=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/sample_gouraudshading/Polygon.htm>Sample page</a>
+<a target=_blank href=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/sample_gouraudshading/Polygon.htm>Sample page</a>
 
 ## on VC++_fixedpoint
 C++ sample writed by fixed point.  
