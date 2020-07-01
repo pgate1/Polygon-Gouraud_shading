@@ -23,5 +23,5 @@ Using Altera QuartusII 12.1sp1.
 Dither Off  
 <img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_DE0_dither_off.jpg>
 
-Dither On  
+Dither On (SW1)  
 <img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_DE0_dither_on.jpg>
