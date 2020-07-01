@@ -1,5 +1,5 @@
 Flow report for DE0_top
-Sun Jul 14 19:55:49 2019
+Wed Jul 01 20:59:09 2020
 Quartus II 64-Bit Version 12.1 Build 243 01/31/2013 Service Pack 1.33 SJ Web Edition
 
 
@@ -38,17 +38,17 @@ applicable agreement for further details.
 +---------------------------------------------------------------------------------------+
 ; Flow Summary                                                                          ;
 +------------------------------------+--------------------------------------------------+
-; Flow Status                        ; Successful - Sun Jul 14 19:55:36 2019            ;
+; Flow Status                        ; Successful - Wed Jul 01 20:58:58 2020            ;
 ; Quartus II 64-Bit Version          ; 12.1 Build 243 01/31/2013 SP 1.33 SJ Web Edition ;
 ; Revision Name                      ; DE0_top                                          ;
 ; Top-level Entity Name              ; DE0_top                                          ;
 ; Family                             ; Cyclone III                                      ;
 ; Device                             ; EP3C16F484C6                                     ;
 ; Timing Models                      ; Final                                            ;
-; Total logic elements               ; 6,565 / 15,408 ( 43 % )                          ;
-;     Total combinational functions  ; 5,620 / 15,408 ( 36 % )                          ;
-;     Dedicated logic registers      ; 3,212 / 15,408 ( 21 % )                          ;
-; Total registers                    ; 3212                                             ;
+; Total logic elements               ; 6,696 / 15,408 ( 43 % )                          ;
+;     Total combinational functions  ; 5,746 / 15,408 ( 37 % )                          ;
+;     Dedicated logic registers      ; 3,224 / 15,408 ( 21 % )                          ;
+; Total registers                    ; 3224                                             ;
 ; Total pins                         ; 254 / 347 ( 73 % )                               ;
 ; Total virtual pins                 ; 0                                                ;
 ; Total memory bits                  ; 75,776 / 516,096 ( 15 % )                        ;
@@ -62,29 +62,29 @@ applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 07/14/2019 19:54:02 ;
+; Start date & time ; 07/01/2020 20:57:16 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; DE0_top             ;
 +-------------------+---------------------+
 
 
-+------------------------------------------------------------------------------------------------------------------+
-; Flow Non-Default Global Settings                                                                                 ;
-+-------------------------------------+---------------------------------+---------------+-------------+------------+
-; Assignment Name                     ; Value                           ; Default Value ; Entity Name ; Section Id ;
-+-------------------------------------+---------------------------------+---------------+-------------+------------+
-; COMPILER_SIGNATURE_ID               ; 256051852878944.156310164211780 ; --            ; --          ; --         ;
-; MAX_CORE_JUNCTION_TEMP              ; 85                              ; --            ; --          ; --         ;
-; MIN_CORE_JUNCTION_TEMP              ; 0                               ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_FAR_END_VMEAS      ; Half Signal Swing               ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_FAR_END_VMEAS      ; Half Signal Swing               ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_NEAR_END_VMEAS     ; Half Vccio                      ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_NEAR_END_VMEAS     ; Half Vccio                      ; --            ; --          ; --         ;
-; PARTITION_COLOR                     ; 16764057                        ; --            ; --          ; Top        ;
-; PARTITION_FITTER_PRESERVATION_LEVEL ; PLACEMENT_AND_ROUTING           ; --            ; --          ; Top        ;
-; PARTITION_NETLIST_TYPE              ; SOURCE                          ; --            ; --          ; Top        ;
-; PROJECT_OUTPUT_DIRECTORY            ; output_files                    ; --            ; --          ; --         ;
-+-------------------------------------+---------------------------------+---------------+-------------+------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Flow Non-Default Global Settings                                                                                ;
++-------------------------------------+--------------------------------+---------------+-------------+------------+
+; Assignment Name                     ; Value                          ; Default Value ; Entity Name ; Section Id ;
++-------------------------------------+--------------------------------+---------------+-------------+------------+
+; COMPILER_SIGNATURE_ID               ; 42766113777482.159360463609668 ; --            ; --          ; --         ;
+; MAX_CORE_JUNCTION_TEMP              ; 85                             ; --            ; --          ; --         ;
+; MIN_CORE_JUNCTION_TEMP              ; 0                              ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_FAR_END_VMEAS      ; Half Signal Swing              ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_FAR_END_VMEAS      ; Half Signal Swing              ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_NEAR_END_VMEAS     ; Half Vccio                     ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_NEAR_END_VMEAS     ; Half Vccio                     ; --            ; --          ; --         ;
+; PARTITION_COLOR                     ; 16764057                       ; --            ; --          ; Top        ;
+; PARTITION_FITTER_PRESERVATION_LEVEL ; PLACEMENT_AND_ROUTING          ; --            ; --          ; Top        ;
+; PARTITION_NETLIST_TYPE              ; SOURCE                         ; --            ; --          ; Top        ;
+; PROJECT_OUTPUT_DIRECTORY            ; output_files                   ; --            ; --          ; --         ;
++-------------------------------------+--------------------------------+---------------+-------------+------------+
 
 
 +-------------------------------------------------------------------------------------------------------------------------------+
@@ -92,11 +92,11 @@ applicable agreement for further details.
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name               ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis      ; 00:00:22     ; 1.0                     ; 503 MB              ; 00:00:21                           ;
-; Fitter                    ; 00:01:04     ; 1.4                     ; 926 MB              ; 00:01:18                           ;
-; Assembler                 ; 00:00:02     ; 1.0                     ; 448 MB              ; 00:00:02                           ;
-; TimeQuest Timing Analyzer ; 00:00:11     ; 1.6                     ; 554 MB              ; 00:00:13                           ;
-; Total                     ; 00:01:39     ; --                      ; --                  ; 00:01:54                           ;
+; Analysis & Synthesis      ; 00:00:28     ; 1.0                     ; 508 MB              ; 00:00:27                           ;
+; Fitter                    ; 00:01:05     ; 1.5                     ; 928 MB              ; 00:01:20                           ;
+; Assembler                 ; 00:00:03     ; 1.0                     ; 448 MB              ; 00:00:03                           ;
+; TimeQuest Timing Analyzer ; 00:00:10     ; 1.5                     ; 545 MB              ; 00:00:12                           ;
+; Total                     ; 00:01:46     ; --                      ; --                  ; 00:02:02                           ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -105,10 +105,10 @@ applicable agreement for further details.
 +---------------------------+------------------+-----------+------------+----------------+
 ; Module Name               ; Machine Hostname ; OS Name   ; OS Version ; Processor type ;
 +---------------------------+------------------+-----------+------------+----------------+
-; Analysis & Synthesis      ; home-PC          ; Windows 7 ; 6.1        ; x86_64         ;
-; Fitter                    ; home-PC          ; Windows 7 ; 6.1        ; x86_64         ;
-; Assembler                 ; home-PC          ; Windows 7 ; 6.1        ; x86_64         ;
-; TimeQuest Timing Analyzer ; home-PC          ; Windows 7 ; 6.1        ; x86_64         ;
+; Analysis & Synthesis      ; pc7-home         ; Windows 7 ; 6.1        ; x86_64         ;
+; Fitter                    ; pc7-home         ; Windows 7 ; 6.1        ; x86_64         ;
+; Assembler                 ; pc7-home         ; Windows 7 ; 6.1        ; x86_64         ;
+; TimeQuest Timing Analyzer ; pc7-home         ; Windows 7 ; 6.1        ; x86_64         ;
 +---------------------------+------------------+-----------+------------+----------------+
 
 

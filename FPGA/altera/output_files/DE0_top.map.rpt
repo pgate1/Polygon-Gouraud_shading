@@ -1,5 +1,5 @@
 Analysis & Synthesis report for DE0_top
-Sun Jul 14 19:54:25 2019
+Wed Jul 01 20:57:45 2020
 Quartus II 64-Bit Version 12.1 Build 243 01/31/2013 Service Pack 1.33 SJ Web Edition
 
 
@@ -100,15 +100,15 @@ applicable agreement for further details.
 +---------------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                          ;
 +------------------------------------+--------------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Sun Jul 14 19:54:25 2019            ;
+; Analysis & Synthesis Status        ; Successful - Wed Jul 01 20:57:44 2020            ;
 ; Quartus II 64-Bit Version          ; 12.1 Build 243 01/31/2013 SP 1.33 SJ Web Edition ;
 ; Revision Name                      ; DE0_top                                          ;
 ; Top-level Entity Name              ; DE0_top                                          ;
 ; Family                             ; Cyclone III                                      ;
-; Total logic elements               ; 7,027                                            ;
-;     Total combinational functions  ; 5,616                                            ;
-;     Dedicated logic registers      ; 3,212                                            ;
-; Total registers                    ; 3212                                             ;
+; Total logic elements               ; 7,153                                            ;
+;     Total combinational functions  ; 5,742                                            ;
+;     Dedicated logic registers      ; 3,224                                            ;
+; Total registers                    ; 3224                                             ;
 ; Total pins                         ; 254                                              ;
 ; Total virtual pins                 ; 0                                                ;
 ; Total memory bits                  ; 75,776                                           ;
@@ -272,28 +272,28 @@ applicable agreement for further details.
 +---------------------------------------------+-------+
 ; Resource                                    ; Usage ;
 +---------------------------------------------+-------+
-; Estimated Total logic elements              ; 7,027 ;
+; Estimated Total logic elements              ; 7,153 ;
 ;                                             ;       ;
-; Total combinational functions               ; 5616  ;
+; Total combinational functions               ; 5742  ;
 ; Logic element usage by number of LUT inputs ;       ;
-;     -- 4 input functions                    ; 2485  ;
-;     -- 3 input functions                    ; 2465  ;
-;     -- <=2 input functions                  ; 666   ;
+;     -- 4 input functions                    ; 2524  ;
+;     -- 3 input functions                    ; 2515  ;
+;     -- <=2 input functions                  ; 703   ;
 ;                                             ;       ;
 ; Logic elements by mode                      ;       ;
-;     -- normal mode                          ; 3723  ;
-;     -- arithmetic mode                      ; 1893  ;
+;     -- normal mode                          ; 3817  ;
+;     -- arithmetic mode                      ; 1925  ;
 ;                                             ;       ;
-; Total registers                             ; 3212  ;
-;     -- Dedicated logic registers            ; 3212  ;
+; Total registers                             ; 3224  ;
+;     -- Dedicated logic registers            ; 3224  ;
 ;     -- I/O registers                        ; 0     ;
 ;                                             ;       ;
 ; I/O pins                                    ; 254   ;
 ; Total memory bits                           ; 75776 ;
 ; Embedded Multiplier 9-bit elements          ; 44    ;
-; Maximum fan-out                             ; 3296  ;
-; Total fan-out                               ; 33286 ;
-; Average fan-out                             ; 3.48  ;
+; Maximum fan-out                             ; 3308  ;
+; Total fan-out                               ; 33714 ;
+; Average fan-out                             ; 3.47  ;
 +---------------------------------------------+-------+
 
 
@@ -302,9 +302,9 @@ applicable agreement for further details.
 +----------------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------+--------------+
 ; Compilation Hierarchy Node                         ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                               ; Library Name ;
 +----------------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------+--------------+
-; |DE0_top                                           ; 5616 (0)          ; 3212 (0)     ; 75776       ; 44           ; 0       ; 22        ; 254  ; 0            ; |DE0_top                                                                                                          ;              ;
-;    |core:CU|                                       ; 5599 (79)         ; 3196 (37)    ; 75776       ; 44           ; 0       ; 22        ; 0    ; 0            ; |DE0_top|core:CU                                                                                                  ;              ;
-;       |GPU:gpu|                                    ; 5375 (433)        ; 3095 (254)   ; 75776       ; 44           ; 0       ; 22        ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu                                                                                          ;              ;
+; |DE0_top                                           ; 5742 (0)          ; 3224 (0)     ; 75776       ; 44           ; 0       ; 22        ; 254  ; 0            ; |DE0_top                                                                                                          ;              ;
+;    |core:CU|                                       ; 5725 (115)        ; 3208 (37)    ; 75776       ; 44           ; 0       ; 22        ; 0    ; 0            ; |DE0_top|core:CU                                                                                                  ;              ;
+;       |GPU:gpu|                                    ; 5450 (502)        ; 3107 (266)   ; 75776       ; 44           ; 0       ; 22        ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu                                                                                          ;              ;
 ;          |cos_table:cos_t|                         ; 10 (10)           ; 1 (1)        ; 5120        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|cos_table:cos_t                                                                          ;              ;
 ;             |altsyncram:cells_rtl_0|               ; 0 (0)             ; 0 (0)        ; 5120        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|cos_table:cos_t|altsyncram:cells_rtl_0                                                   ;              ;
 ;                |altsyncram_ir71:auto_generated|    ; 0 (0)             ; 0 (0)        ; 5120        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|cos_table:cos_t|altsyncram:cells_rtl_0|altsyncram_ir71:auto_generated                    ;              ;
@@ -324,7 +324,7 @@ applicable agreement for further details.
 ;             |mul_s25x16:mulx|                      ; 29 (0)            ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_0|mul_s25x16:mulx                                                       ;              ;
 ;                |lpm_mult:Mult0|                    ; 29 (0)            ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_0|mul_s25x16:mulx|lpm_mult:Mult0                                        ;              ;
 ;                   |mult_q4t:auto_generated|        ; 29 (29)           ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_0|mul_s25x16:mulx|lpm_mult:Mult0|mult_q4t:auto_generated                ;              ;
-;          |drawGouraud:poly_1|                      ; 1217 (1171)       ; 705 (704)    ; 16384       ; 10           ; 0       ; 5         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1                                                                       ;              ;
+;          |drawGouraud:poly_1|                      ; 1223 (1177)       ; 705 (704)    ; 16384       ; 10           ; 0       ; 5         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1                                                                       ;              ;
 ;             |inv_table:inv_t|                      ; 17 (17)           ; 1 (1)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1|inv_table:inv_t                                                       ;              ;
 ;                |altsyncram:cells_rtl_0|            ; 0 (0)             ; 0 (0)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1|inv_table:inv_t|altsyncram:cells_rtl_0                                ;              ;
 ;                   |altsyncram_mt71:auto_generated| ; 0 (0)             ; 0 (0)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1|inv_table:inv_t|altsyncram:cells_rtl_0|altsyncram_mt71:auto_generated ;              ;
@@ -340,7 +340,7 @@ applicable agreement for further details.
 ;             |mul_s25x16:mulx|                      ; 29 (0)            ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1|mul_s25x16:mulx                                                       ;              ;
 ;                |lpm_mult:Mult0|                    ; 29 (0)            ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1|mul_s25x16:mulx|lpm_mult:Mult0                                        ;              ;
 ;                   |mult_q4t:auto_generated|        ; 29 (29)           ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_1|mul_s25x16:mulx|lpm_mult:Mult0|mult_q4t:auto_generated                ;              ;
-;          |drawGouraud:poly_2|                      ; 1212 (1166)       ; 705 (704)    ; 16384       ; 10           ; 0       ; 5         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2                                                                       ;              ;
+;          |drawGouraud:poly_2|                      ; 1218 (1172)       ; 705 (704)    ; 16384       ; 10           ; 0       ; 5         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2                                                                       ;              ;
 ;             |inv_table:inv_t|                      ; 17 (17)           ; 1 (1)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2|inv_table:inv_t                                                       ;              ;
 ;                |altsyncram:cells_rtl_0|            ; 0 (0)             ; 0 (0)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2|inv_table:inv_t|altsyncram:cells_rtl_0                                ;              ;
 ;                   |altsyncram_mt71:auto_generated| ; 0 (0)             ; 0 (0)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2|inv_table:inv_t|altsyncram:cells_rtl_0|altsyncram_mt71:auto_generated ;              ;
@@ -356,7 +356,7 @@ applicable agreement for further details.
 ;             |mul_s25x16:mulx|                      ; 29 (0)            ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2|mul_s25x16:mulx                                                       ;              ;
 ;                |lpm_mult:Mult0|                    ; 29 (0)            ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2|mul_s25x16:mulx|lpm_mult:Mult0                                        ;              ;
 ;                   |mult_q4t:auto_generated|        ; 29 (29)           ; 0 (0)        ; 0           ; 4            ; 0       ; 2         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_2|mul_s25x16:mulx|lpm_mult:Mult0|mult_q4t:auto_generated                ;              ;
-;          |drawGouraud:poly_3|                      ; 1253 (1207)       ; 705 (704)    ; 16384       ; 10           ; 0       ; 5         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_3                                                                       ;              ;
+;          |drawGouraud:poly_3|                      ; 1247 (1201)       ; 705 (704)    ; 16384       ; 10           ; 0       ; 5         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_3                                                                       ;              ;
 ;             |inv_table:inv_t|                      ; 17 (17)           ; 1 (1)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_3|inv_table:inv_t                                                       ;              ;
 ;                |altsyncram:cells_rtl_0|            ; 0 (0)             ; 0 (0)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_3|inv_table:inv_t|altsyncram:cells_rtl_0                                ;              ;
 ;                   |altsyncram_mt71:auto_generated| ; 0 (0)             ; 0 (0)        ; 16384       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|GPU:gpu|drawGouraud:poly_3|inv_table:inv_t|altsyncram:cells_rtl_0|altsyncram_mt71:auto_generated ;              ;
@@ -387,7 +387,7 @@ applicable agreement for further details.
 ;       |seg7_ctrl:seg7_1|                           ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|seg7_ctrl:seg7_1                                                                                 ;              ;
 ;       |seg7_ctrl:seg7_2|                           ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|seg7_ctrl:seg7_2                                                                                 ;              ;
 ;       |seg7_ctrl:seg7_3|                           ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|seg7_ctrl:seg7_3                                                                                 ;              ;
-;       |vga_ctrl:vga|                               ; 95 (95)           ; 44 (44)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|vga_ctrl:vga                                                                                     ;              ;
+;       |vga_ctrl:vga|                               ; 110 (110)         ; 44 (44)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|core:CU|vga_ctrl:vga                                                                                     ;              ;
 ;    |sys_reset:RSTU|                                ; 17 (17)           ; 16 (16)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE0_top|sys_reset:RSTU                                                                                           ;              ;
 +----------------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
@@ -727,12 +727,12 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 3212  ;
+; Total registers                              ; 3224  ;
 ; Number of registers using Synchronous Clear  ; 49    ;
 ; Number of registers using Synchronous Load   ; 80    ;
-; Number of registers using Asynchronous Clear ; 3044  ;
+; Number of registers using Asynchronous Clear ; 3056  ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 3123  ;
+; Number of registers using Clock Enable       ; 3135  ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
@@ -768,14 +768,14 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------+
 ; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output        ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------+
-; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|zs[3][0] ;
-; 3:1                ; 10 bits   ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[3][5]  ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|zs[3][1] ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[3][4]  ;
 ; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|zs[0][0] ;
-; 3:1                ; 10 bits   ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[0][9]  ;
-; 4:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|zs[2][1] ;
-; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[2][3]  ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[0][3]  ;
+; 4:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|zs[2][0] ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[2][7]  ;
 ; 4:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|zs[1][1] ;
-; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[1][6]  ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; Yes        ; |DE0_top|core:CU|GPU:gpu|z[1][9]  ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------+
 
 
@@ -2338,9 +2338,6 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; Port        ; Type   ; Severity ; Details                                                                             ;
 +-------------+--------+----------+-------------------------------------------------------------------------------------+
 ; eval_out    ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_B[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_G[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_R[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; con         ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; enable      ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; vc3[15..8]  ; Input  ; Info     ; Stuck at VCC                                                                        ;
@@ -2380,9 +2377,6 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-------------+--------+----------+-------------------------------------------------------------------------------------+
 ; eval_out    ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; dbg         ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_B[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_G[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_R[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; con         ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; enable      ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; vc3[15..8]  ; Input  ; Info     ; Stuck at VCC                                                                        ;
@@ -2422,9 +2416,6 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-------------+--------+----------+-------------------------------------------------------------------------------------+
 ; eval_out    ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; dbg         ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_B[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_G[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_R[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; con         ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; enable      ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; vc3[23..8]  ; Input  ; Info     ; Stuck at VCC                                                                        ;
@@ -2485,9 +2476,6 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-------------+--------+----------+-------------------------------------------------------------------------------------+
 ; eval_out    ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; dbg         ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_B[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_G[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-; out_R[3..0] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
 ; con         ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; enable      ; Input  ; Info     ; Stuck at VCC                                                                        ;
 ; vc3[7..0]   ; Input  ; Info     ; Stuck at VCC                                                                        ;
@@ -2529,7 +2517,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:18     ;
+; Top            ; 00:00:25     ;
 +----------------+--------------+
 
 
@@ -2539,7 +2527,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Analysis & Synthesis
     Info: Version 12.1 Build 243 01/31/2013 Service Pack 1.33 SJ Web Edition
-    Info: Processing started: Sun Jul 14 19:54:01 2019
+    Info: Processing started: Wed Jul 01 20:57:15 2020
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off DE0_top -c DE0_top
 Info (11104): Parallel Compilation has detected 4 hyper-threaded processors. However, the extra hyper-threaded processors will not be used by default. Parallel Compilation will use 2 of the 2 physical processors detected instead.
 Info (12021): Found 1 design units, including 1 entities, in source file /home/psx/dev/polygon/polyzsortshading_vblank/sfl/de0_top.v
@@ -2602,52 +2590,62 @@ Info (12128): Elaborating entity "sys_reset" for hierarchy "sys_reset:RSTU"
 Warning (10230): Verilog HDL assignment warning at sys_reset.v(19): truncated value with size 32 to match size of target (16)
 Info (12128): Elaborating entity "core" for hierarchy "core:CU"
 Warning (10036): Verilog HDL or VHDL warning at core.v(35): object "btn_0" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(46): object "_cmask_2_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(47): object "_cmask_2_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(50): object "_cmask_1_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(51): object "_cmask_1_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(54): object "_cmask_0_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(55): object "_cmask_0_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(59): object "_seg7_3_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(60): object "_seg7_3_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(64): object "_seg7_2_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(65): object "_seg7_2_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(69): object "_seg7_1_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(70): object "_seg7_1_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(74): object "_seg7_0_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(75): object "_seg7_0_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(91): object "_vga_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(92): object "_vga_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(105): object "_gpu_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at core.v(106): object "_gpu_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(50): object "_cmask_2_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(51): object "_cmask_2_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(54): object "_cmask_1_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(55): object "_cmask_1_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(58): object "_cmask_0_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(59): object "_cmask_0_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(63): object "_seg7_3_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(64): object "_seg7_3_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(68): object "_seg7_2_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(69): object "_seg7_2_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(73): object "_seg7_1_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(74): object "_seg7_1_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(78): object "_seg7_0_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(79): object "_seg7_0_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(95): object "_vga_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(96): object "_vga_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(110): object "_gpu_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(111): object "_gpu_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(121): object "_net_9" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(124): object "_net_12" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(126): object "_net_14" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at core.v(129): object "_net_17" assigned a value but never read
+Warning (10030): Net "dither_table.data_a" at core.v(43) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "dither_table.waddr_a" at core.v(43) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "dither_table.we_a" at core.v(43) has no driver or initial value, using a default initial value '0'
 Info (12128): Elaborating entity "GPU" for hierarchy "core:CU|GPU:gpu"
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(77): object "_sin_t_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(78): object "_sin_t_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(82): object "_cos_t_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(83): object "_cos_t_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(114): object "_poly_3_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(115): object "_poly_3_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(138): object "_poly_2_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(139): object "_poly_2_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(162): object "_poly_1_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(163): object "_poly_1_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(186): object "_poly_0_p_reset" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(187): object "_poly_0_m_clock" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(192): object "_task_rotate_wait_do" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at GPU.v(257): object "_stage_rotate_wait_state_reg" assigned a value but never read
-Warning (10230): Verilog HDL assignment warning at GPU.v(845): truncated value with size 32 to match size of target (2)
-Warning (10230): Verilog HDL assignment warning at GPU.v(847): truncated value with size 32 to match size of target (2)
-Warning (10230): Verilog HDL assignment warning at GPU.v(856): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at GPU.v(858): truncated value with size 32 to match size of target (3)
-Warning (10030): Net "px.data_a" at GPU.v(49) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "px.waddr_a" at GPU.v(49) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "py.data_a" at GPU.v(50) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "py.waddr_a" at GPU.v(50) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "pz.data_a" at GPU.v(51) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "pz.waddr_a" at GPU.v(51) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "px.we_a" at GPU.v(49) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "py.we_a" at GPU.v(50) has no driver or initial value, using a default initial value '0'
-Warning (10030): Net "pz.we_a" at GPU.v(51) has no driver or initial value, using a default initial value '0'
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(84): object "_sin_t_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(85): object "_sin_t_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(89): object "_cos_t_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(90): object "_cos_t_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(121): object "_poly_3_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(122): object "_poly_3_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(145): object "_poly_2_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(146): object "_poly_2_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(169): object "_poly_1_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(170): object "_poly_1_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(193): object "_poly_0_p_reset" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(194): object "_poly_0_m_clock" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(199): object "_task_rotate_wait_do" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at GPU.v(283): object "_stage_rotate_wait_state_reg" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at GPU.v(921): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at GPU.v(923): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at GPU.v(932): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at GPU.v(934): truncated value with size 32 to match size of target (3)
+Warning (10030): Net "px.data_a" at GPU.v(51) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "px.waddr_a" at GPU.v(51) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "py.data_a" at GPU.v(52) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "py.waddr_a" at GPU.v(52) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "pz.data_a" at GPU.v(53) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "pz.waddr_a" at GPU.v(53) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "dither_table.data_a" at GPU.v(64) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "dither_table.waddr_a" at GPU.v(64) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "px.we_a" at GPU.v(51) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "py.we_a" at GPU.v(52) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "pz.we_a" at GPU.v(53) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "dither_table.we_a" at GPU.v(64) has no driver or initial value, using a default initial value '0'
 Info (12128): Elaborating entity "drawGouraud" for hierarchy "core:CU|GPU:gpu|drawGouraud:poly_3"
 Warning (10036): Verilog HDL or VHDL warning at drawGouraud.v(150): object "_inv_t_p_reset" assigned a value but never read
 Warning (10036): Verilog HDL or VHDL warning at drawGouraud.v(151): object "_inv_t_m_clock" assigned a value but never read
@@ -2683,7 +2681,9 @@ Warning (10030): Net "cells.we_a" at sin_table.v(18) has no driver or initial va
 Info (12128): Elaborating entity "vga_ctrl" for hierarchy "core:CU|vga_ctrl:vga"
 Info (12128): Elaborating entity "seg7_ctrl" for hierarchy "core:CU|seg7_ctrl:seg7_3"
 Info (12128): Elaborating entity "chatmask" for hierarchy "core:CU|chatmask:cmask_2"
-Info (276014): Found 3 instances of uninferred RAM logic
+Info (276014): Found 5 instances of uninferred RAM logic
+    Info (276004): RAM logic "core:CU|dither_table" is uninferred due to inappropriate RAM size
+    Info (276004): RAM logic "core:CU|GPU:gpu|dither_table" is uninferred due to inappropriate RAM size
     Info (276004): RAM logic "core:CU|GPU:gpu|pz" is uninferred due to inappropriate RAM size
     Info (276004): RAM logic "core:CU|GPU:gpu|py" is uninferred due to inappropriate RAM size
     Info (276004): RAM logic "core:CU|GPU:gpu|px" is uninferred due to inappropriate RAM size
@@ -2994,9 +2994,8 @@ Info (286030): Timing-Driven Synthesis is running
 Info (144001): Generated suppressed messages file C:/home/psx/dev/polygon/polyzsortshading_vblank/sfl/altera/output_files/DE0_top.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Warning (21074): Design contains 24 input pin(s) that do not drive logic
+Warning (21074): Design contains 23 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "CLOCK_50_2"
-    Warning (15610): No output dependent on input pin "SW[1]"
     Warning (15610): No output dependent on input pin "SW[2]"
     Warning (15610): No output dependent on input pin "SW[3]"
     Warning (15610): No output dependent on input pin "SW[4]"
@@ -3019,18 +3018,18 @@ Warning (21074): Design contains 24 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "GPIO0_CLKIN[1]"
     Warning (15610): No output dependent on input pin "GPIO1_CLKIN[0]"
     Warning (15610): No output dependent on input pin "GPIO1_CLKIN[1]"
-Info (21057): Implemented 7568 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 7694 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 29 input pins
     Info (21059): Implemented 118 output pins
     Info (21060): Implemented 107 bidirectional pins
-    Info (21061): Implemented 7186 logic cells
+    Info (21061): Implemented 7312 logic cells
     Info (21064): Implemented 84 RAM segments
     Info (21062): Implemented 44 DSP elements
-Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 244 warnings
-    Info: Peak virtual memory: 507 megabytes
-    Info: Processing ended: Sun Jul 14 19:54:25 2019
-    Info: Elapsed time: 00:00:24
-    Info: Total CPU time (on all processors): 00:00:24
+Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 253 warnings
+    Info: Peak virtual memory: 508 megabytes
+    Info: Processing ended: Wed Jul 01 20:57:45 2020
+    Info: Elapsed time: 00:00:30
+    Info: Total CPU time (on all processors): 00:00:29
 
 
 +------------------------------------------+
