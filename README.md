@@ -20,4 +20,8 @@ Using VisualStudio2015.
 FPGA sample for DE0 board.   
 Using Altera QuartusII 12.1sp1.
 
-<img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_DE0.jpg>
+Dither Off  
+<img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_DE0_dither_off.jpg>
+
+Dither On  
+<img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_DE0_dither_on.jpg>
