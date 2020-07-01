@@ -181,9 +181,9 @@ void Polygon::drawPolyBilinear(uint8 *img, int x1, int y1, int x2, int y2, int x
 			// BMPÇÃÇΩÇﬂBGRÇÃï¿Ç—Ç…Ç»Ç¡ÇƒÇ¢ÇÈ
 			uint8 *p = img + ((640 * y) + x) * 3;
 			if (dither_on) {
-				p[0] = dither(x, y, (pb >> CMULS)) & 0xF8;
-				p[1] = dither(x, y, (pg >> CMULS)) & 0xF8;
-				p[2] = dither(x, y, (pr >> CMULS)) & 0xF8;
+				p[0] = dither(x, y, (pb >> CMULS)) & 0xF0;
+				p[1] = dither(x, y, (pg >> CMULS)) & 0xF0;
+				p[2] = dither(x, y, (pr >> CMULS)) & 0xF0;
 			}
 			else {
 				p[0] = (pb >> CMULS);
@@ -225,7 +225,7 @@ void Polygon::DrawPoly(uint8 *img)
 	// îwåi
 	for (int y = 0; y<480; y++) {
 		int col = 0xFF - (y >> 1);
-		if(dither_on) col = dither(0, y, col) & 0xF8;
+		if(dither_on) col = dither(0, y, col) & 0xF0;
 		for (int x = 0; x < 640; x++) {
 			uint8 *p = img + (y * 640 + x) * 3;
 			p[0] = p[1] = p[2] = col;
