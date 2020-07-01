@@ -27,6 +27,9 @@ function polyshadingvblank_init()
 {
 	ax = 29; ay = 324;
 
+	// 誤差によって描画されないラインのテスト
+//	ax = 315; ay = 48;
+
 	let cvs = document.getElementById('polyshadingvblank');
 	cvs.addEventListener('mousemove', onMove, false);
 	cvs.addEventListener('mousedown', onClick, false);
@@ -117,6 +120,23 @@ function zsort(tri, men)
 	return mp;
 }
 
+let lowcol_on = false;
+let dither_on = false;
+
+function dither(x, y, col)
+{
+	const table = [
+		-4,  0, -3,  1,
+		 2, -2,  3, -1,
+		-3,  1, -4,  0,
+		 3, -1,  2, -2
+	];
+	col += table[((y & 3) << 2) | (x & 3)];
+	if (col>255) col = 255;
+	else if (col<0) col = 0;
+	return col;
+}
+
 function polyshadingvblank()
 {
 	const vA = new Vertex(-90, -90,  90, 0xFF4444);
@@ -142,7 +162,9 @@ function polyshadingvblank()
 
 	// background
 	for(let y=0; y<480; y++){
-		const col = 0xFF - y / 2;
+		let col = 0xFF - y / 2;
+		if(dither_on) col = dither(0, y, col);
+		if(lowcol_on) col &= 0xF0;
 		for(let x=0; x<640; x++){
 			const pos = (y * 640 + x) * 4;
 			img_data.data[pos + 0] = col;
@@ -228,36 +250,43 @@ function polyshadingvblank()
 					ex = x23; er = r23; eg = g23; eb = b23;
 				}
 			}
+			
+		//	if(Math.round(y)==256) console.log(sx + "," + ex);
 
 			if(y<=y2 && y1!=y2){
-				x12 += ax12;
-				r12 += ar12;
-				g12 += ag12;
-				b12 += ab12;
+				x12 += ax12; r12 += ar12; g12 += ag12; b12 += ab12;
 			}
 			else{
-				x23 += ax23;
-				r23 += ar23;
-				g23 += ag23;
-				b23 += ab23;
+				x23 += ax23; r23 += ar23; g23 += ag23; b23 += ab23;
 			}
-			x13 += ax13;
-			r13 += ar13;
-			g13 += ag13;
-			b13 += ab13;
+			x13 += ax13; r13 += ar13; g13 += ag13; b13 += ab13;
 
-			let ar = (er - sr) / (ex - sx);
-			let ag = (eg - sg) / (ex - sx);
-			let ab = (eb - sb) / (ex - sx);
+		//	if(sx>ex) continue;
+
+			let ar, ag, ab;
+		//	if(sx!=ex){
+				ar = (er - sr) / (ex - sx);
+				ag = (eg - sg) / (ex - sx);
+				ab = (eb - sb) / (ex - sx);
+		//	}
 
 			let pr = sr, pg = sg, pb = sb;
 	
+			const cols = (lowcol_on ? 0xF0 : 0xFF);
+
 			for(let x=Math.round(sx); x<Math.round(ex); x++){
 				const pos = (y * 640 + x) * 4;
-				img_data.data[pos + 0] = pr; // 赤 red
-				img_data.data[pos + 1] = pg; // 緑 green
-				img_data.data[pos + 2] = pb; // 青 blue
-			//	img_data.data[pos + 3] = 0xFF; // 非透明度 alpha
+				if(dither_on){
+					img_data.data[pos + 0] = dither(x, y, pr) & cols; // 赤 red
+					img_data.data[pos + 1] = dither(x, y, pg) & cols; // 緑 green
+					img_data.data[pos + 2] = dither(x, y, pb) & cols; // 青 blue
+				}
+				else{
+					img_data.data[pos + 0] = pr & cols; // 赤 red
+					img_data.data[pos + 1] = pg & cols; // 緑 green
+					img_data.data[pos + 2] = pb & cols; // 青 blue
+				//	img_data.data[pos + 3] = 0xFF; // 非透明度 alpha
+				}
 				pr += ar;
 				pg += ag;
 				pb += ab;
@@ -271,6 +300,8 @@ function polyshadingvblank()
 	ctx.font = "20px Arial";
 	ctx.fillStyle = "blue";//"white";
 	ctx.fillText(fps.get()+" fps", 570, 30);
+
+//	ctx.fillText("a(" + ax + "," + ay + ")", 550, 50);
 }
 
 let px, py;
@@ -312,4 +343,16 @@ function roll()
 	polyshadingvblank();
 	// アニメーション
 	callbackId = requestAnimationFrame(roll);
+}
+
+function lowcol_flip()
+{
+	lowcol_on = !lowcol_on;
+	polyshadingvblank();
+}
+
+function dither_flip()
+{
+	dither_on = !dither_on;
+	polyshadingvblank();
 }
