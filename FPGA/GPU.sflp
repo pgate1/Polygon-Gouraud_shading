@@ -7,10 +7,10 @@
 circuit GPU
 {
 	input x<10>, y<10>;
-	input ax<9>, ay<9>;
-	instrin vblank_begin, hblank_begin, htiming;
+	input ax<9>, ay<9>, ofs_x<10>, ofs_y<10>;
+	instrin vblank_begin, hblank_begin, htiming, dither_on;
 	output view_on, eR<4>, eG<4>, eB<4>;
-	reg_wr view_reg, eR_reg<4>, eG_reg<4>, eB_reg<4>;
+	reg_wr view_reg, eR_reg<8>, eG_reg<8>, eB_reg<8>;
 
 	// ４点により正四面体を構成する
 	mem px[4]<10> = {-90,  90, -90, 90};
@@ -33,6 +33,13 @@ circuit GPU
 
 	drawGouraud poly_0, poly_1, poly_2, poly_3;
 	instrself voff;
+
+	mem dither_table[16]<4> = {	// Dither
+		-4,  0, -3,  1,
+		 2, -2,  3, -1,
+		-3,  1, -4,  0,
+		 3, -1,  2, -2
+	};
 
 output dbg;
 
@@ -62,13 +69,19 @@ dbg = poly_0.dbg;
 	}
 
 	// 四面必要、右回り
+
 	poly_0.con(gx[0],gy[0],vc[0], gx[1],gy[1],vc[1], gx[2],gy[2],vc[2], x,y, 0b1);
 	poly_1.con(gx[1],gy[1],vc[1], gx[3],gy[3],vc[3], gx[2],gy[2],vc[2], x,y, 0b1);
 	poly_2.con(gx[0],gy[0],vc[0], gx[3],gy[3],vc[3], gx[1],gy[1],vc[1], x,y, 0b1);
 	poly_3.con(gx[0],gy[0],vc[0], gx[2],gy[2],vc[2], gx[3],gy[3],vc[3], x,y, 0b1);
-
+/*
+	poly_0.con(gx[0],gy[0],0xEE4444, gx[1],gy[1],0xEE4444, gx[2],gy[2],0xEE4444, x,y, 0b1);
+	poly_1.con(gx[1],gy[1],0xEEEE44, gx[3],gy[3],0xEEEE44, gx[2],gy[2],0xEEEE44, x,y, 0b1);
+	poly_2.con(gx[0],gy[0],0x44EE44, gx[3],gy[3],0x44EE44, gx[1],gy[1],0x44EE44, x,y, 0b1);
+	poly_3.con(gx[0],gy[0],0x4444EE, gx[2],gy[2],0x4444EE, gx[3],gy[3],0x4444EE, x,y, 0b1);
+*/
 	par(i=0;i<4;i++){
-		instruct von[i] par{ eR_reg:=poly[i].out_R<7:4>; eG_reg:=poly[i].out_G<7:4>; eB_reg:=poly[i].out_B<7:4>; }
+		instruct von[i] par{ eR_reg:=poly[i].out_R; eG_reg:=poly[i].out_G; eB_reg:=poly[i].out_B; }
 	}
 
 	alt{
@@ -93,9 +106,36 @@ dbg = poly_0.dbg;
 
 	view_reg := ^voff;
 	view_on = view_reg;
-	eR = eR_reg;
-	eG = eG_reg;
-	eB = eB_reg;
+
+	// ディザ処理
+	if(dither_on){
+		sel d<4>;
+		d = dither_table[y<1:0>||x<1:0>];
+		sel dr<9>, dg<9>, db<9>;
+		dr = (0b0||eR_reg) + 9#d;
+		any{
+			dr<8:7>==0b10 : eR = 0xF;
+			dr<8:7>==0b11 : eR = 0x0;
+			else : eR = dr<7:4>;
+		}
+		dg = (0b0||eG_reg) + 9#d;
+		any{
+			dg<8:7>==0b10 : eG = 0xF;
+			dg<8:7>==0b11 : eG = 0x0;
+			else : eG = dg<7:4>;
+		}
+		db = (0b0||eB_reg) + 9#d;
+		any{
+			db<8:7>==0b10 : eB = 0xF;
+			db<8:7>==0b11 : eB = 0x0;
+			else : eB = db<7:4>;
+		}
+	}
+	else{
+		eR = eR_reg<7:4>;
+		eG = eG_reg<7:4>;
+		eB = eB_reg<7:4>;
+	}
 
 	// VBlank中に回転処理
 	stage rotate {
@@ -138,8 +178,8 @@ dbg = poly_0.dbg;
 		}
 		state stshift par{
 			// 画面中央に平行移動
-			gx[index] := rx2 + 320;
-			gy[index] := ry2 + 240;
+			gx[index] := rx2 + ofs_x; // 0 ～ 640
+			gy[index] := ry2 + ofs_y; // 0 ～ 480
 			gz[index] := rz2;
 			goto stinit;
 			index++;
