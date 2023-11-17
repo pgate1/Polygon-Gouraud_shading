@@ -1,0 +1,8 @@
+Polygon demo
+
+[Operation]
+  Dpad : Offset.
+  ABXY : Rotate.
+  LR : Down, Up, action speed.
+  Start : Stop, Start, action.
+  Select : Initialize.
