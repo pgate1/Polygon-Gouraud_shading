@@ -1,0 +1,20 @@
+
+circuit key_controll
+{
+	input key_in;
+	output key_out;
+
+	instrout push, hold;
+
+	reg_wr old_push;
+	old_push := key_in;
+	if(^old_push & key_in) push(); // Å‰‚Ì‰Ÿ‚µ
+
+	reg_wr hold_count<17>;
+	if(key_in) hold_count++;
+	else hold_count := 0;
+
+	if(push | /&hold_count) hold(); // ‰Ÿ‚µ‘±‚¯
+
+	key_out = key_in;
+}

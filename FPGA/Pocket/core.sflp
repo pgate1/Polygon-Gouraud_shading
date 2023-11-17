@@ -1,0 +1,194 @@
+
+%i "../vga_ctrl.h"
+%i "../GPU.h"
+%i "key_controll.h"
+
+circuit core
+{
+	input KEY<16>;
+	key_controll keyc_0, keyc_1, keyc_2, keyc_3, keyc_4, keyc_5, keyc_6, keyc_7,
+                 keyc_8, keyc_9, keyc_A, keyc_B, keyc_C, keyc_D, keyc_E, keyc_F;
+	sela key[16];
+//--------------------- VGA --------------------------------
+	output VGA_HS, VGA_VS, VGA_DE;
+	output VGA_R<8>, VGA_G<8>, VGA_B<8>;
+	vga_ctrl vga;
+//----------------------------------------------------------
+
+/*
+上下左右：オフセット
+ABXY：回転
+LR：速度
+Start：デモ実行・停止
+Select：初期化
+*/
+
+	reg_ws reset;
+
+	GPU gpu;
+	reg_wr ax<9>, ay<9>; // 回転角 0～359度
+	reg_wr ofs_x<10>, ofs_y<10>; // オフセット(100,100)(540,380)
+	reg_wr add_x<2>, add_y<2>;
+
+	mem dither_table[16]<4> = {	// Dither
+		-4,  0, -3,  1,
+		 2, -2,  3, -1,
+		-3,  1, -4,  0,
+		 3, -1,  2, -2
+	};
+
+	reg_ws f_auto;
+	reg_wr f_dither;
+
+	reg_wr count<21>;
+	reg_wr count_max<21>;
+
+	if(reset){
+		// 初期回転角
+		ax := 29;
+		ay := 324;
+		// ふちの描画確認
+	//	ax := 20;
+	//	ay := 125;
+
+	//	ax := 242;
+	//	ay := 234;
+
+		// 初期オフセット
+		ofs_x := 320;
+		ofs_y := 240;
+		add_x := 1;
+		add_y := 1;
+
+	//	f_auto := 0b1;
+	//	f_dither := 0b1; // ディザがあると画面がバグりやすい？
+
+		count_max := 0b001000000000000000000;
+
+		reset := 0b0;
+	}
+
+	par(i=0;i<16;i++){
+		keyc[i].key_in = KEY<i>; key[i] = keyc[i].key_out;
+	}
+
+	if(keyc_3.hold) ofs_x+=2; // →
+	if(keyc_2.hold) ofs_x-=2; // ←
+	if(keyc_0.hold) ofs_y-=2; // ↑
+	if(keyc_1.hold) ofs_y+=2; // ↓
+
+	if(keyc_4.hold){ // A
+		if(ay==359) ay := 0;
+		else ay++;
+	}
+	if(keyc_7.hold){ // Y
+		if(ay==0) ay := 359;
+		else ay--;
+	}
+	if(keyc_6.hold){ // X
+		if(ax==359) ax := 0;
+		else ax++;
+	}
+	if(keyc_5.hold){ // B
+		if(ax==0) ax := 359;
+		else ax--;
+	}
+
+	if(keyc_8.push){ // L
+		if(count_max<20>==0b0) count_max := count_max << 1;
+		count := 0;
+	}
+	if(keyc_9.push){ // R
+		if(count_max<0>==0b0) count_max := count_max >> 1;
+		count := 0;
+	}
+
+	if(keyc_E.push) reset := 0b1; // Select
+	if(keyc_F.push) f_auto := ^f_auto; // Start
+
+//	clock25M_div := ^clock25M_div;
+//	if(clock25M_div){
+		vga.htiming();
+		gpu.htiming();
+//	}
+
+	if(gpu.view_on){
+		vga.iR = gpu.eR;
+		vga.iG = gpu.eG;
+		vga.iB = gpu.eB;
+	}
+	else{
+		sel bgcol<8>;
+		bgcol = 0xFF - vga.v_count<8:1>;
+		if(f_dither){ // 背景ディザ
+			sel d<4>;
+			d = dither_table[gpu.y<1:0>||0b00];
+			sel dbgcol<9>;
+			dbgcol = (0b0||bgcol) + 9#d;
+			any{
+				dbgcol<8:7>==0b10 : vga.iR = 0xFF;
+				dbgcol<8:7>==0b11 : vga.iR = 0x00;
+				else : vga.iR = dbgcol<7:0>;
+			}
+		}
+		else{
+			vga.iR = bgcol<7:0>;
+		}
+		vga.iG = vga.iR;
+		vga.iB = vga.iR;
+	}
+
+	VGA_HS = vga.h_sync;
+	VGA_VS = vga.v_sync;
+	VGA_DE = vga.h_en & vga.v_en;
+	reg_wr vga_R_reg<8>, vga_G_reg<8>, vga_B_reg<8>;
+	vga_R_reg := vga.oR;
+	vga_G_reg := vga.oG;
+	vga_B_reg := vga.oB;
+	VGA_R = vga_R_reg;
+	VGA_G = vga_G_reg;
+	VGA_B = vga_B_reg;
+
+	instruct vga.vblank_begin gpu.vblank_begin();
+	instruct vga.hblank_begin par{
+		if(vga.v_en) gpu.hblank_begin();
+	}
+
+	gpu.x = vga.h_count;
+	gpu.y = vga.v_count;
+	gpu.ax = ax;
+	gpu.ay = ay;
+	gpu.ofs_x = ofs_x;
+	gpu.ofs_y = ofs_y;
+
+//	if(f_dither) gpu.dither_on();
+
+	// 自動移動回転デモ
+	if(f_auto /*& ^key_8 & ^key_9*/){
+		if(count==count_max) count := 0;
+		else count++;
+	}
+	if(^reset & (count==count_max)){
+		any{
+			(add_x== 1) & (ofs_x==640-160) : add_x := -1;
+			(add_x==-1) & (ofs_x==160)     : add_x :=  1;
+			else : ofs_x += 10#add_x;
+		}
+		any{
+			(add_y== 1) & (ofs_y==480-130) : add_y := -1;
+			(add_y==-1) & (ofs_y==130)     : add_y :=  1;
+			else : ofs_y += 10#add_y;
+		}
+		any{
+			(add_x== 1) & (ax==359) : ax := 0;
+			(add_x==-1) & (ax==  0) : ax := 359;
+			else : ax += 9#add_x;
+		}
+		any{
+			(add_y== 1) & (ay==359) : ay := 0;
+			(add_y==-1) & (ay==  0) : ay := 359;
+			else : ay += 9#add_y;
+		}
+	}
+
+}
