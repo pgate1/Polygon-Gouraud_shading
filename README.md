@@ -21,3 +21,7 @@ FPGA sample for DE0 board.
 Using Altera QuartusII 12.1sp1.
 
 <img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_DE0.jpg>
+
+### on Pocket
+
+<img width=700 src=https://pgate1.at-ninja.jp/PSX_on_FPGA/GPU/polygon_Pocket.jpg>
