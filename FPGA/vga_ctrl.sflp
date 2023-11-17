@@ -8,8 +8,8 @@ circuit vga_ctrl
 	output h_count<10>, v_count<10>;
 	reg_wr h_count_reg<10>, v_count_reg<10>;
 
-	input iR<4>, iG<4>, iB<4>;
-	output oR<4>, oG<4>, oB<4>;
+	input iR<8>, iG<8>, iB<8>;
+	output oR<8>, oG<8>, oB<8>;
 
 	reg_wr h_tim<10>, v_tim<10>;
 	reg_ws h_sync_reg, v_sync_reg;

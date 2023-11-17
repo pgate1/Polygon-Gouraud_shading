@@ -9,7 +9,7 @@ circuit GPU
 	input x<10>, y<10>;
 	input ax<9>, ay<9>, ofs_x<10>, ofs_y<10>;
 	instrin vblank_begin, hblank_begin, htiming, dither_on;
-	output view_on, eR<4>, eG<4>, eB<4>;
+	output view_on, eR<8>, eG<8>, eB<8>;
 	reg_wr view_reg, eR_reg<8>, eG_reg<8>, eB_reg<8>;
 
 	// ÇSì_Ç…ÇÊÇËê≥élñ ëÃÇç\ê¨Ç∑ÇÈ
@@ -114,27 +114,27 @@ dbg = poly_0.dbg;
 		sel dr<9>, dg<9>, db<9>;
 		dr = (0b0||eR_reg) + 9#d;
 		any{
-			dr<8:7>==0b10 : eR = 0xF;
-			dr<8:7>==0b11 : eR = 0x0;
-			else : eR = dr<7:4>;
+			dr<8:7>==0b10 : eR = 0xFF;
+			dr<8:7>==0b11 : eR = 0x00;
+			else : eR = dr<7:0>;
 		}
 		dg = (0b0||eG_reg) + 9#d;
 		any{
-			dg<8:7>==0b10 : eG = 0xF;
-			dg<8:7>==0b11 : eG = 0x0;
-			else : eG = dg<7:4>;
+			dg<8:7>==0b10 : eG = 0xFF;
+			dg<8:7>==0b11 : eG = 0x00;
+			else : eG = dg<7:0>;
 		}
 		db = (0b0||eB_reg) + 9#d;
 		any{
-			db<8:7>==0b10 : eB = 0xF;
-			db<8:7>==0b11 : eB = 0x0;
-			else : eB = db<7:4>;
+			db<8:7>==0b10 : eB = 0xFF;
+			db<8:7>==0b11 : eB = 0x00;
+			else : eB = db<7:0>;
 		}
 	}
 	else{
-		eR = eR_reg<7:4>;
-		eG = eG_reg<7:4>;
-		eB = eB_reg<7:4>;
+		eR = eR_reg<7:0>;
+		eG = eG_reg<7:0>;
+		eB = eB_reg<7:0>;
 	}
 
 	// VBlankíÜÇ…âÒì]èàóù
