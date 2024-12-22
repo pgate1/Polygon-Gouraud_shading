@@ -1,0 +1,235 @@
+
+%i "../chatmask.h"
+%i "../seg7_ctrl.h"
+%i "../vga_ctrl.h"
+%i "Dithering_5to4.h"
+%i "Dithering_6to4.h"
+%i "Dithering_7to4.h"
+%i "Dithering_8to4.h"
+
+%i "../GPU.h"
+
+circuit core
+{
+	input KEY<4>;
+	chatmask cmask_0, cmask_1, cmask_2, cmask_3;
+	sels btn[4];
+	input SW<10>;
+	seg7_ctrl seg7_0, seg7_1, seg7_2, seg7_3;//, seg7_4, seg7_5;
+	sel seg<16>;
+	output HEX0<7>, HEX1<7>, HEX2<7>, HEX3<7>, HEX4<7>, HEX5<7>;
+	output LEDR<10>;
+//--------------------- VGA --------------------------------
+	output VGA_HS, VGA_VS;
+	output VGA_R<4>, VGA_G<4>, VGA_B<4>;
+	reg_wr clock25M_div;
+	vga_ctrl vga;
+	Dithering_5to4 dither5_R, dither5_G, dither5_B;
+	Dithering_6to4 dither6_R, dither6_G, dither6_B;
+	Dithering_7to4 dither7_R, dither7_G, dither7_B;
+	Dithering_8to4 dither8_R, dither8_G, dither8_B;
+//----------------------------------------------------------
+	output vcount<10>, hcount<10>;
+//----------------------------------------------------------
+
+	reg_ws reset;
+
+	GPU gpu;
+	reg_wr ax<9>, ay<9>; // âÒì]äp 0Å`359ìx
+	reg_wr ofs_x<10>, ofs_y<10>; // ÉIÉtÉZÉbÉg(100,100)(540,380)
+	reg_wr add_x<2>, add_y<2>;
+
+	mem dither_table[16]<4> = {	// Dither
+		-4,  0, -3,  1,
+		 2, -2,  3, -1,
+		-3,  1, -4,  0,
+		 3, -1,  2, -2
+	};
+
+	if(reset){
+		// èâä˙âÒì]äp
+		ax := 29;
+		ay := 324;
+
+		// èâä˙ÉIÉtÉZÉbÉg
+		ofs_x := 320;
+		ofs_y := 240;
+		add_x := 1;
+		add_y := 1;
+
+		reset := 0b0;
+	}
+
+	par(i=0;i<4;i++){
+		cmask[i].bin = ^KEY<i>; btn[i] = cmask[i].bout;
+	}
+
+	if(SW<9>){
+		HEX5 = -1;
+		HEX4 = -1;
+		HEX3 = seg7_3.con(seg<15:12>).oSEG;
+		HEX2 = seg7_2.con(seg<11: 8>).oSEG;
+		HEX1 = seg7_1.con(seg< 7: 4>).oSEG;
+		HEX0 = seg7_0.con(seg< 3: 0>).oSEG;
+	}
+	else{
+		HEX5 = -1;
+		HEX4 = -1;
+		HEX3 = -1;
+		HEX2 = -1;
+		HEX1 = -1;
+		HEX0 = -1;
+	}
+
+	clock25M_div := ^clock25M_div;
+	if(clock25M_div){
+		vga.htiming();
+		gpu.htiming();
+	}
+
+vcount = vga.v_count;
+hcount = vga.h_count;
+
+	if(SW<9> & // îíòg
+	  ((vga.h_count==0) | (vga.h_count==639) |
+	   (vga.v_count==0) | (vga.v_count==479))){
+		vga.iR = 0xFF;
+		vga.iG = 0xFF;
+		vga.iB = 0xFF;
+	}
+	else{
+		if(gpu.view_on){
+			vga.iR = gpu.eR;
+			vga.iG = gpu.eG;
+			vga.iB = gpu.eB;
+		}
+		else{
+			sel bgcol<8>;
+		//	bgcol = 0xFF - vga.v_count<8:1>; // è„Ç™îí
+			bgcol = vga.v_count<8:1>; // â∫Ç™îí
+			if(gpu.dither_on){ // îwåiÉfÉBÉU
+				sel d<4>;
+				d = dither_table[gpu.y<1:0>||0b00];
+				sel dbgcol<9>;
+				dbgcol = (0b0||bgcol) + 9#d;
+				any{
+					dbgcol<8:7>==0b10 : vga.iR = 0xFF;
+					dbgcol<8:7>==0b11 : vga.iR = 0x00;
+					else : vga.iR = dbgcol<7:0>;
+				}
+			}
+			else{
+				vga.iR = bgcol<7:0>;
+			}
+			vga.iG = vga.iR;
+			vga.iB = vga.iR;
+		}
+	}
+
+	VGA_HS = vga.h_sync;
+	VGA_VS = vga.v_sync;
+	reg_wr vga_R_reg<4>, vga_G_reg<4>, vga_B_reg<4>;
+	VGA_R = vga_R_reg;
+	VGA_G = vga_G_reg;
+	VGA_B = vga_B_reg;
+
+	dither5_R.col_in = vga.oR<7:3>; dither5_G.col_in = vga.oG<7:3>; dither5_B.col_in = vga.oB<7:3>;
+	dither6_R.col_in = vga.oR<7:2>; dither6_G.col_in = vga.oG<7:2>; dither6_B.col_in = vga.oB<7:2>;
+	dither7_R.col_in = vga.oR<7:1>; dither7_G.col_in = vga.oG<7:1>; dither7_B.col_in = vga.oB<7:1>;
+	dither8_R.col_in = vga.oR; dither8_G.col_in = vga.oG; dither8_B.col_in = vga.oB;
+	instruct vga.vsync par{
+		dither5_R.vsync(); dither5_G.vsync(); dither5_B.vsync();
+		dither6_R.vsync(); dither6_G.vsync(); dither6_B.vsync();
+		dither7_R.vsync(); dither7_G.vsync(); dither7_B.vsync();
+		dither8_R.vsync(); dither8_G.vsync(); dither8_B.vsync();
+	}
+	instruct vga.hsync par{
+		dither5_R.hsync(); dither5_G.hsync(); dither5_B.hsync();
+		dither6_R.hsync(); dither6_G.hsync(); dither6_B.hsync();
+		dither7_R.hsync(); dither7_G.hsync(); dither7_B.hsync();
+		dither8_R.hsync(); dither8_G.hsync(); dither8_B.hsync();
+	}
+	instruct vga.dsync par{
+		dither5_R.dsync(); dither5_G.dsync(); dither5_B.dsync();
+		dither6_R.dsync(); dither6_G.dsync(); dither6_B.dsync();
+		dither7_R.dsync(); dither7_G.dsync(); dither7_B.dsync();
+		dither8_R.dsync(); dither8_G.dsync(); dither8_B.dsync();
+	}
+
+	dither6_R.sw = SW<8>; dither6_G.sw = SW<8>; dither6_B.sw = SW<8>;
+	dither7_R.sw = SW<8>; dither7_G.sw = SW<8>; dither7_B.sw = SW<8>;
+	dither8_R.sw = SW<8>; dither8_G.sw = SW<8>; dither8_B.sw = SW<8>;
+
+	any{
+		SW<0> : par{ vga_R_reg := dither5_R.col_out; vga_G_reg := dither5_G.col_out; vga_B_reg := dither5_B.col_out; }
+		SW<1> : par{ vga_R_reg := dither6_R.col_out; vga_G_reg := dither6_G.col_out; vga_B_reg := dither6_B.col_out; }
+		SW<2> : par{ vga_R_reg := dither7_R.col_out; vga_G_reg := dither7_G.col_out; vga_B_reg := dither7_B.col_out; }
+		SW<3> : par{ vga_R_reg := dither8_R.col_out; vga_G_reg := dither8_G.col_out; vga_B_reg := dither8_B.col_out; }
+		else  : par{ vga_R_reg := vga.oR<7:4>; vga_G_reg := vga.oG<7:4>; vga_B_reg := vga.oB<7:4>; }
+	}
+
+	instruct vga.vblank_begin gpu.vblank_begin();
+	instruct vga.hblank_begin par{
+		if(vga.v_en){
+			gpu.hblank_begin();
+		}
+	}
+
+	gpu.x = vga.h_count;
+	gpu.y = vga.v_count;
+	gpu.ax = ax;
+	gpu.ay = ay;
+	gpu.ofs_x = ofs_x;
+	gpu.ofs_y = ofs_y;
+
+//	if(SW<1>==0b0) gpu.dither_on();
+
+	reg_wr count<18>;
+	count++;
+
+	// à íuå≈íËÅAâÒì]ëÄçÏ
+	if(SW<9>==0b1){
+		ofs_x := 320;
+		ofs_y := 240;
+		add_x := 1;
+		add_y := 1;
+		if(btn_2 & /&count) any{
+			ax==359 : ax := 0;
+			else : ax++;
+		}
+		if(btn_1 & /&count) any{
+			ay==359 : ay := 0;
+			else : ay++;
+		}
+	}
+
+	// é©ìÆà⁄ìÆâÒì]ÉfÉÇ
+	if((SW<9>==0b0) & /&count){
+		any{
+			(add_x== 1) & (ofs_x==640-160) : add_x := -1;
+			(add_x==-1) & (ofs_x==160)     : add_x :=  1;
+			else : ofs_x += 10#add_x;
+		}
+		any{
+			(add_y== 1) & (ofs_y==480-130) : add_y := -1;
+			(add_y==-1) & (ofs_y==130)     : add_y :=  1;
+			else : ofs_y += 10#add_y;
+		}
+		any{
+			(add_x== 1) & (ax==359) : ax := 0;
+			(add_x==-1) & (ax==  0) : ax := 359;
+			else : ax += 9#add_x;
+		}
+		any{
+			(add_y== 1) & (ay==359) : ay := 0;
+			(add_y==-1) & (ay==  0) : ay := 359;
+			else : ay += 9#add_y;
+		}
+	}
+
+	seg = ax<7:0> || ay<7:0>;
+
+	if(SW<9>) LEDR = gpu.dbg || ofs_x<8:0>;
+	else LEDR = 0b0000000000;
+
+}

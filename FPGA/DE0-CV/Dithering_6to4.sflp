@@ -1,0 +1,75 @@
+
+/*
+	RGB666からRGB444への2x2ディザリング
+*/
+
+circuit Dithering_6to4
+{
+	input col_in<6>;
+	instrin vsync, hsync, dsync;
+	input sw;
+	output col_out<4>;
+
+	reg frame, line, dot;
+
+	// フレームで切り替え
+	instruct vsync par{
+		frame := ^frame;
+		line := 0b0;
+	}
+	// ラインで切り替え
+	instruct hsync if(^vsync){
+		line := ^line;
+		dot := 0b0;
+	}
+	// ドットで切り替え
+	instruct dsync if(^vsync & ^hsync){
+		dot := ^dot;
+	}
+
+	sel lower<4>, col_inc<5>, upper<4>;
+	// 下位2ビット切り捨てたものをlowerとする
+	lower = col_in<5:2>;
+	// +1したものをupperとする
+	col_inc = (0b0||lower) + 0b0_0001;
+	if(col_inc<4>) upper = 0b1111;
+	else upper = col_inc<3:0>;
+
+	// 下位2bitによりパターンを選択
+	sel pat<4>;
+	switch(col_in<1:0>){
+		case 0: pat = 0b0000; // 0000
+		case 1: pat = 0b0001; // 1000 <-> 0001
+		case 2: pat = 0b0011; // 1001 <-> 0110
+		case 3: pat = 0b0111; // 0111 <-> 1110
+	}
+
+	sel patx<4>;
+if(sw==0b0){
+	// フレームでドット位置入れ替え
+	if(col_in<1:0>==2){
+		switch(frame){
+			case 0b0: patx = pat<1> || pat<3> || pat<2> || pat<0>;
+			case 0b1: patx = pat<3> || pat<1> || pat<0> || pat<2>;
+		}
+	}
+	else{
+		switch(frame){
+			case 0b0: patx = pat<3> || pat<1> || pat<2> || pat<0>;
+			case 0b1: patx = pat<0> || pat<2> || pat<1> || pat<3>;
+		}
+	}
+}
+else{
+	// 固定
+	patx = pat<1> || pat<3> || pat<2> || pat<0>;
+}
+
+	// 2x2から選択
+	sel p;
+	p = patx<line||dot>;
+
+	if(p) col_out = upper;
+	else col_out = lower;
+
+}

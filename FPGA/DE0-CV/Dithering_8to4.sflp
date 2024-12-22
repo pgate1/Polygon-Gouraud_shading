@@ -1,0 +1,97 @@
+
+/*
+	RGB888からRGB444への2x2ディザリング
+*/
+
+circuit Dithering_8to4
+{
+	input col_in<8>;
+	instrin vsync, hsync, dsync;
+	input sw;
+	output col_out<4>;
+
+	reg frame<2>, line, dot;
+
+	// フレームで切り替え
+	instruct vsync par{
+		frame++;
+		line := 0b0;
+	}
+	// ラインで切り替え
+	instruct hsync if(^vsync){
+		line := ^line;
+		dot := 0b0;
+	}
+	// ドットで切り替え
+	instruct dsync if(^vsync & ^hsync){
+		dot := ^dot;
+	}
+
+	sel lower<4>, col_inc<5>, upper<4>;
+	// 下位4ビット切り捨てたものをlowerとする
+	lower = col_in<7:4>;
+	// +1したものをupperとする
+	col_inc = (0b0||lower) + 0b0_0001;
+	if(col_inc<4>) upper = 0b1111;
+	else upper = col_inc<3:0>;
+
+	// ドットのFRC
+	sel frc0, frc1, frc2, frc3, frc4;
+	frc0 = 0b0;
+	frc1 = (frame==0); // a
+	frc2 = (frame==0) | (frame==2); // b
+//	frc3 = (frame==0) | (frame==1) | (frame==2); // c
+	frc3 = (frame==1) | (frame==2) | (frame==3); // c
+	frc4 = 0b1;
+
+	// 下位4bitによりパターンを選択
+	sel pat<4>;
+	switch(col_in<3:0>){
+		case 0x0: pat = frc0 || frc0 || frc0 || frc0; // 0000
+		case 0x1: pat = frc0 || frc0 || frc0 || frc1; // 000a
+		case 0x2: pat = frc0 || frc0 || frc0 || frc2; // 000b
+		case 0x3: pat = frc0 || frc0 || frc0 || frc3; // 000c
+		case 0x4: pat = frc0 || frc0 || frc0 || frc4; // 0001 <-> 1000
+		case 0x5: pat = frc0 || frc0 || frc1 || frc4; // a001 <-> 01a0
+		case 0x6: pat = frc0 || frc0 || frc2 || frc4; // b001 <-> 01b0
+		case 0x7: pat = frc0 || frc0 || frc3 || frc4; // c001 <-> 01c0
+		case 0x8: pat = frc0 || frc0 || frc4 || frc4; // 1001 <-> 0110
+		case 0x9: pat = frc0 || frc1 || frc4 || frc4; // 10a1 <-> a110
+		case 0xA: pat = frc0 || frc2 || frc4 || frc4; // 10b1 <-> b110
+		case 0xB: pat = frc0 || frc3 || frc4 || frc4; // 10c1 <-> c110
+		case 0xC: pat = frc0 || frc4 || frc4 || frc4; // 0111 <-> 1110
+		case 0xD: pat = frc1 || frc4 || frc4 || frc4; // a111 <-> 111a
+		case 0xE: pat = frc2 || frc4 || frc4 || frc4; // b111 <-> 111b
+		case 0xF: pat = frc3 || frc4 || frc4 || frc4; // c111 <-> 111c
+	}
+
+	sel patx<4>;
+if(sw==0b0){
+	// フレームでドット位置入れ替え
+	if((col_in<3:0>==0x5) | (col_in<3:0>==0x6) | (col_in<3:0>==0x7) | (col_in<3:0>==0x8)
+	 | (col_in<3:0>==0x9) | (col_in<3:0>==0xA) | (col_in<3:0>==0xB)){
+		switch(frame<0>){
+			case 0b0: patx = pat<1> || pat<3> || pat<2> || pat<0>;
+			case 0b1: patx = pat<3> || pat<1> || pat<0> || pat<2>;
+		}
+	}
+	else{
+		switch(frame<0>){
+			case 0b0: patx = pat<3> || pat<1> || pat<2> || pat<0>;
+			case 0b1: patx = pat<0> || pat<2> || pat<1> || pat<3>;
+		}
+	}
+}
+else{
+	// 固定
+	patx = pat<1> || pat<3> || pat<2> || pat<0>;
+}
+
+	// 2x2から選択
+	sel p;
+	p = patx<line||dot>;
+
+	if(p) col_out = upper;
+	else col_out = lower;
+
+}
