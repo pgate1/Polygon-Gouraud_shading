@@ -1,7 +1,9 @@
 
 %i "../chatmask.h"
 %i "../seg7_ctrl.h"
-%i "../vga_ctrl.h"
+%i "../VGA_ctrl.h"
+%i "Dithering_6to4.h"
+%i "Dithering_7to4.h"
 
 %i "../GPU.h"
 
@@ -19,7 +21,9 @@ circuit core
 	output VGA_HS, VGA_VS;
 	output VGA_R<4>, VGA_G<4>, VGA_B<4>;
 	reg_wr clock25M_div;
-	vga_ctrl vga;
+	VGA_ctrl vga;
+//	Dithering_6to4 dither_R, dither_G, dither_B;
+	Dithering_7to4 dither_R, dither_G, dither_B;
 //----------------------------------------------------------
 
 	reg_ws reset;
@@ -60,10 +64,18 @@ circuit core
 		cmask[i].bin = ^BUTTON<i>; btn[i] = cmask[i].bout;
 	}
 
-	HEX3 = seg7_3.con(seg<15:12>).oSEG;
-	HEX2 = seg7_2.con(seg<11: 8>).oSEG;
-	HEX1 = seg7_1.con(seg< 7: 4>).oSEG;
-	HEX0 = seg7_0.con(seg< 3: 0>).oSEG;
+	if(SW<0>){
+		HEX3 = seg7_3.con(seg<15:12>).oSEG;
+		HEX2 = seg7_2.con(seg<11: 8>).oSEG;
+		HEX1 = seg7_1.con(seg< 7: 4>).oSEG;
+		HEX0 = seg7_0.con(seg< 3: 0>).oSEG;
+	}
+	else{
+		HEX3 = 0b1111111;
+		HEX2 = 0b1111111;
+		HEX1 = 0b1111111;
+		HEX0 = 0b1111111;
+	}
 
 	clock25M_div := ^clock25M_div;
 	if(clock25M_div){
@@ -74,9 +86,9 @@ circuit core
 	if(SW<0> & // 白枠
 	  ((vga.h_count==0) | (vga.h_count==639) |
 	   (vga.v_count==0) | (vga.v_count==479))){
-		vga.iR = 0b1111;
-		vga.iG = 0b1111;
-		vga.iB = 0b1111;
+		vga.iR = 0xFF;
+		vga.iG = 0xFF;
+		vga.iB = 0xFF;
 	}
 	else{
 		if(gpu.view_on){
@@ -86,20 +98,21 @@ circuit core
 		}
 		else{
 			sel bgcol<8>;
-			bgcol = 0xFF - vga.v_count<8:1>;
+		//	bgcol = 0xFF - vga.v_count<8:1>; // 上が白
+			bgcol = vga.v_count<8:1>; // 下が白
 			if(gpu.dither_on){ // 背景ディザ
 				sel d<4>;
 				d = dither_table[gpu.y<1:0>||0b00];
 				sel dbgcol<9>;
 				dbgcol = (0b0||bgcol) + 9#d;
 				any{
-					dbgcol<8:7>==0b10 : vga.iR = 0xF;
-					dbgcol<8:7>==0b11 : vga.iR = 0x0;
-					else : vga.iR = dbgcol<7:4>;
+					dbgcol<8:7>==0b10 : vga.iR = 0xFF;
+					dbgcol<8:7>==0b11 : vga.iR = 0x00;
+					else : vga.iR = dbgcol<7:0>;
 				}
 			}
 			else{
-				vga.iR = bgcol<7:4>;
+				vga.iR = bgcol<7:0>;
 			}
 			vga.iG = vga.iR;
 			vga.iB = vga.iR;
@@ -108,13 +121,47 @@ circuit core
 
 	VGA_HS = vga.h_sync;
 	VGA_VS = vga.v_sync;
-	reg_wr vga_R_reg<4>, vga_G_reg<4>, vga_B_reg<4>;
-	vga_R_reg := vga.oR;
-	vga_G_reg := vga.oG;
-	vga_B_reg := vga.oB;
-	VGA_R = vga_R_reg;
-	VGA_G = vga_G_reg;
-	VGA_B = vga_B_reg;
+	reg_wr VGA_R_reg<4>, VGA_G_reg<4>, VGA_B_reg<4>;
+	if(SW<1>){
+		VGA_R_reg := vga.oR<7:4>;
+		VGA_G_reg := vga.oG<7:4>;
+		VGA_B_reg := vga.oB<7:4>;
+	}
+	else{
+		VGA_R_reg := dither_R.col_out;
+		VGA_G_reg := dither_G.col_out;
+		VGA_B_reg := dither_B.col_out;
+	}
+	VGA_R = VGA_R_reg;
+	VGA_G = VGA_G_reg;
+	VGA_B = VGA_B_reg;
+/*
+	dither_R.col_in = vga.oR<7:2>;
+	dither_G.col_in = vga.oG<7:2>;
+	dither_B.col_in = vga.oB<7:2>;
+*/
+	dither_R.col_in = vga.oR<7:1>;
+	dither_G.col_in = vga.oG<7:1>;
+	dither_B.col_in = vga.oB<7:1>;
+
+	instruct vga.vsync par{
+		dither_R.vsync();
+		dither_G.vsync();
+		dither_B.vsync();
+	}
+	instruct vga.hsync par{
+		dither_R.hsync();
+		dither_G.hsync();
+		dither_B.hsync();
+	}
+	instruct vga.dsync par{
+		dither_R.dsync();
+		dither_G.dsync();
+		dither_B.dsync();
+	}
+//	dither_R.sw = SW<2>;
+//	dither_G.sw = SW<2>;
+//	dither_B.sw = SW<2>;
 
 	instruct vga.vblank_begin gpu.vblank_begin();
 	instruct vga.hblank_begin par{
@@ -130,7 +177,8 @@ circuit core
 	gpu.ofs_x = ofs_x;
 	gpu.ofs_y = ofs_y;
 
-	if(SW<1>==0b0) gpu.dither_on();
+// 無い方がFRCディザの効果が出る
+//	if(SW<1>==0b0) gpu.dither_on();
 
 	reg_wr count<18>;
 	count++;
@@ -177,6 +225,7 @@ circuit core
 
 	seg = ax<7:0> || ay<7:0>;
 
-	LEDG = gpu.dbg || ofs_x<8:0>;
+	if(SW<0>) LEDG = gpu.dbg || ofs_x<8:0>;
+	else LEDG = 0b0000000000;
 
 }
